@@ -1,10 +1,10 @@
-`ifndef _SEQ_INCLUDED_  //	CHANGE THE NAME
-`define _SEQ_INCLUDED_  // CHANGE THE NAME
+`ifndef APB_SLAVE_SEQ_INCLUDED_  
+`define APB_SLAVE_SEQ_INCLUDED_ 
 
-class _sequence extends uvm_sequence#(_seq_item); // CHANGE THE NAME
-	`uvm_object_utils(_sequence)                    // CHANGE
+class apb_slave_seq extends uvm_sequence#(apb_slave_seq_item);
+	`uvm_object_utils(apb_slave_seq)                   
 
-	function new(string name = "_sequence");        // CHANGE
+	function new(string name = "apb_slave_seq");    
 		super.new(name);
 	endfunction: new
 
@@ -20,6 +20,6 @@ class _sequence extends uvm_sequence#(_seq_item); // CHANGE THE NAME
 		finish_item(req);
 	endtask: body
 
-endclass: _sequence  // CHANGE THE NAME
+endclass: apb_slave_seq 
 
 `endif
