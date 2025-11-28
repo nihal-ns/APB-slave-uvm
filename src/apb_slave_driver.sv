@@ -4,7 +4,7 @@
 class apb_slave_driver extends uvm_driver#(apb_slave_seq_item); 
 	`uvm_component_utils(apb_slave_driver)              
 
-	virtual apb_slave_intf vif;  
+	virtual apb_intf vif;  
 
 	function new(string name, uvm_component parent);
 		super.new(name, parent);
@@ -12,7 +12,7 @@ class apb_slave_driver extends uvm_driver#(apb_slave_seq_item);
 
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		if(!uvm_config_db#(virtual apb_slave_intf)::get(this,"","vif",vif)) begin   
+		if(!uvm_config_db#(virtual apb_intf)::get(this,"","vif",vif)) begin   
 			`uvm_fatal("NO_VIF","virtual interface failed to get from config")       
 		end
 	endfunction: build_phase

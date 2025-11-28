@@ -1,7 +1,7 @@
-`ifndef APB_SLAVE_INTF_INCLUDED_
-`define APB_SLAVE_INTF_INCLUDED_
+`ifndef APB_INTF_INCLUDED_
+`define APB_INTF_INCLUDED_
 
-interface apb_slave_intf (input bit PCLK, PRESETn);
+interface apb_intf (input bit PCLK, PRESETn);
 
 	logic [`ADDR_WIDTH:0] PADDR;
 	logic PSELx;
@@ -18,17 +18,17 @@ interface apb_slave_intf (input bit PCLK, PRESETn);
 		default input #0 output #0;
 		input PRESETn;
 		output PADDR, PSELx, PENABLE, PWRITE, PWDATA, PSTRB;
-	endclocking
+	endclocking: drv_cb
 
 	clocking mon_cb@(posedge PCLK);
 		default input #0 output #0;
 		input PADDR, PSELx, PENABLE, PWRITE, PWDATA, PSTRB;
 		input PREADY, PRDATA, PSLVERR;
-	endclocking
+	endclocking: mon_cb
 
 	modport DRIVER(clocking drv_cb);
 	modport MONITOR(clocking mon_cb);
 
-endinterface: apb_slave_intf	
+endinterface: apb_intf	
 
 `endif

@@ -1,5 +1,5 @@
 `include "uvm_macros.svh"
-`include "apb_slave_intf.sv"
+`include "apb_intf.sv"
 `include "apb_slave_pkg.sv"
 /* `include "design.sv" */
 `include "apb_slave_assertion.sv"
@@ -19,7 +19,7 @@ module top;
 		PRESETn = 1;
   end
 
-	apb_slave_intf intf(PCLK, PRESETn);
+	apb_intf intf(PCLK, PRESETn);
 
 	design dut (
 		.PCLK(PCLK),
@@ -37,7 +37,7 @@ module top;
 	bind intf assertion ASSERT(.*); 
 
 	initial begin
-		uvm_config_db#(virtual apb_slave_intf)::set(null,"*","vif",vif);
+		uvm_config_db#(virtual apb_intf)::set(null,"*","vif",vif);
 	end
 
 	initial begin

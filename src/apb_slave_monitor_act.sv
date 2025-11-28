@@ -4,7 +4,7 @@
 class apb_slave_monitor_act extends uvm_monitor;
 	`uvm_component_utils(apb_slave_monitor_act)     
 
-	virtual apb_slave_intf vif;     
+	virtual apb_intf vif;     
 	uvm_analysis_port #(apb_slave_seq_item) mon_act_port;   
 
 	function new(string name = "apb_slave_monitor_act", uvm_component parent);   
@@ -14,7 +14,7 @@ class apb_slave_monitor_act extends uvm_monitor;
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
 		 mon_act_port = new("mon_act_port",this);   
-		if(!uvm_config_db#(virtual apb_slave_intf)::get(this,"","vif",vif))  
+		if(!uvm_config_db#(virtual apb_intf)::get(this,"","vif",vif))  
 			`uvm_fatal("NO_VIF","virtual interface failed to get from config");
 	endfunction: build_phase
 
