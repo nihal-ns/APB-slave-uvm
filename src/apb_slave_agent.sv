@@ -17,15 +17,20 @@ class apb_slave_agent extends uvm_agent;
 		super.build_phase(phase);
 		
 		if(get_is_active == UVM_ACTIVE) begin
-			drv = driver::type_id::create("drv",this);
-			seqr = sequencer::type_id::create("seqr",this);
+			drv = apb_slave_driver::type_id::create("drv",this);
+			seqr = apb_slave_sequencer::type_id::create("seqr",this);
+			mon_act = apb_slave_monitor_act::type_id::create("mon_act",this);
 		end
-	mon_act = monitor_active::type_id::create("mon_act",this);
+		else begin
+			mon_pass = apb_slave_monitor_pass::type_id::create("mon_pass",this);
+		end
 	endfunction: build_phase	
 
 	function void connect_phase(uvm_phase phase);
 		super.connect_phase(phase);
-		drv.seq_item_port.connect(seqr.seq_item_export);
+		if(get_is_active == UVM_ACTIVE) begin
+			drv.seq_item_port.connect(seqr.seq_item_export);
+		end
 	endfunction: connect_phase
 
 endclass: apb_slave_agent
