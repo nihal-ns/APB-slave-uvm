@@ -34,6 +34,7 @@ class apb_slave_driver extends uvm_driver#(apb_slave_seq_item);
 		vif.PENABLE <= 0;
 		vif.PADDR   <= req.PADDR;
 		vif.PWRITE  <= req.PWRITE;
+		vif.PSTRB		<= req.PSTRB;
 		if (req.PWRITE) begin
 			vif.PWDATA <= req.PWDATA;
 		end
@@ -55,7 +56,7 @@ class apb_slave_driver extends uvm_driver#(apb_slave_seq_item);
 		@(vif.drv_cb);
 		vif.PSELx   <= 0;
 		vif.PENABLE <= 0;
-    `uvm_info(get_type_name(),$sformatf("APB %s transfer completed: ADDR=0x%0h, DATA=0x%0h", (req.PWRITE ? "WRITE" : "READ"), req.PADDR, (req.PWRITE ? req.PWDATA : vif.PRDATA)), UVM_MEDIUM)	
+    `uvm_info(get_type_name(),$sformatf("APB %s transfer completed: ADDR:%0d | DATA:%0d | STRB:%0d", (req.PWRITE ? "WRITE" : "READ"), req.PADDR, (req.PWRITE ? req.PWDATA : vif.PRDATA),vif.PSTRB), UVM_MEDIUM)	
 	/* repeat(1)@(vif.drv_cb); */ // should check if this is needed or not	
 	endtask: drive
 

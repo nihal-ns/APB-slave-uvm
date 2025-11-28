@@ -30,10 +30,11 @@ class apb_slave_monitor_act extends uvm_monitor;
 			item.PENABLE	= vif.PENABLE;
 			item.PWRITE		= vif.PWRITE;
 			item.PWDATA		= vif.PWDATA;
+			item.PSTRB		= vif.PSTRB;
 			mon_act_port.write(item);
 
 			if(item.PWRITE)
-				`uvm_info(get_type_name,$sformatf("monitor active write: enable:%0b |pwrite:%0b |psel:%0d |addr:%0d |wdata:%0d",item.PENABLE, item.PWRITE, item.PSELx, item.PADDR, item.PWDATA),UVM_LOW)
+				`uvm_info(get_type_name,$sformatf("monitor active write: enable:%0b |pwrite:%0b |psel:%0d |addr:%0d |wdata:%0d | strb:%0d",item.PENABLE, item.PWRITE, item.PSELx, item.PADDR, item.PWDATA, item.PSTRB),UVM_LOW)
 			else
 				`uvm_info(get_type_name,$sformatf("monitor active read: enable:%0b |pwrite:%0b |psel:%0d |addr:%0d",item.PENABLE, item.PWRITE, item.PSELx, item.PADDR),UVM_LOW)
 			repeat(2)@(vif.mon_cb);

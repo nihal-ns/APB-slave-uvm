@@ -7,6 +7,7 @@ class apb_slave_seq_item extends uvm_sequence_item;
 	rand logic PENABLE;
 	rand logic PWRITE;
 	rand logic [`WIDTH -1:0] PWDATA;
+	rand logic [3:0] PSTRB;
 	
 	logic PREADY;
 	logic [`WIDTH-1:0] PRDATA;
@@ -18,6 +19,7 @@ class apb_slave_seq_item extends uvm_sequence_item;
 		`uvm_field_int(PENABLE, UVM_ALL_ON)
 		`uvm_field_int(PWRITE, UVM_ALL_ON)
 		`uvm_field_int(PWDATA, UVM_ALL_ON)
+		`uvm_field_int(PSTRB, UVM_ALL_ON)
 
 		`uvm_field_int(PREADY, UVM_ALL_ON)
 		`uvm_field_int(PRDATA, UVM_ALL_ON)
