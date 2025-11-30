@@ -15,6 +15,7 @@ class apb_env extends uvm_env;
 
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
+		uvm_config_db#(uvm_active_passive_enum)::set(this, "agt_passt", "is_active", UVM_PASSIVE);
 		agt_act		= apb_slave_agent::type_id::create("agt_act",this);
 		agt_pass	= apb_slave_agent::type_id::create("agt_pass",this);
 		scb				= apb_scoreboard::type_id::create("scb",this);
