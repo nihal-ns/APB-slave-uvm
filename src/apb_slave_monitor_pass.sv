@@ -23,14 +23,15 @@ class apb_slave_monitor_pass extends uvm_monitor;
 			apb_slave_seq_item item = apb_slave_seq_item::type_id::create("item");
 
 			@(vif.mon_cb);
-			wait (vif.PSELx && vif.PENABLE && !vif.PWRITE && vif.PREADY); // should check again
+			/* wait (vif.PSELx && vif.PENABLE && !vif.PWRITE && vif.PREADY); // should check again */
+			wait (vif.PSELx && vif.PENABLE  && vif.PREADY); // should check again
 
 			item.PREADY = vif.PREADY;
 			item.PRDATA = vif.PRDATA;
 			item.PSLVERR = vif.PSLVERR;
 			mon_pass_port.write(item);
 
-			`uvm_info(get_type_name,$sformatf("monitor passive: ready:%0b |rdata:%0d |error:%0b",item.PREADY, item.PRDATA, item.PSLVERR),UVM_LOW)
+			`uvm_info(get_type_name,$sformatf("\nmonitor passive: ready:%0b |rdata:%0d |error:%0b",item.PREADY, item.PRDATA, item.PSLVERR),UVM_LOW)
 			repeat(2)@(vif.mon_cb);
 		end
 	endtask: run_phase
