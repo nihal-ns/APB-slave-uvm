@@ -26,6 +26,7 @@ class apb_slave_driver extends uvm_driver#(apb_slave_seq_item);
 	endtask: run_phase
 	
 	virtual task drive;
+		
 		// ------------------------------------
 		// 1. SETUP Phase: PSEL=1, PENABLE=0
 		// ------------------------------------

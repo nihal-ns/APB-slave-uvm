@@ -16,8 +16,9 @@ class apb_slave_agent extends uvm_agent;
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
 
-		if(uvm_config_db#(uvm_active_passive_enum)::get(this, "", "is_active", is_active)) begin
-			`uvm_info("AGENT_CFG", $sformatf("Config found: Switching to %s", is_active.name()), UVM_LOW)
+		// if removed both agent will be active, i don't why
+		if(!uvm_config_db#(uvm_active_passive_enum)::get(this, "", "is_active", is_active)) begin
+			`uvm_error("No pass", $sformatf("get failed from the config",) )
 		end
 		
 		if(get_is_active == UVM_ACTIVE) begin
