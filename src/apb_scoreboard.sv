@@ -8,7 +8,7 @@ class apb_scoreboard extends uvm_scoreboard;
 	`uvm_component_utils(apb_scoreboard)
 
 	uvm_analysis_imp_mon_act #(apb_slave_seq_item, apb_scoreboard) item_act_port;
-	uvm_analysis_imp_mon_pass #(apb_slave-seq_item, apb_scoreboard) item_pass_port;
+	uvm_analysis_imp_mon_pass #(apb_slave_seq_item, apb_scoreboard) item_pass_port;
 
 	virtual apb_slave_intf vif;
 	apb_slave_seq_item act_packet_q[$];
@@ -26,12 +26,12 @@ class apb_scoreboard extends uvm_scoreboard;
 		item_pass_port = new("item_pass_port",this);
 	endfunction: build_phase
 
-	virtual function void write_mon_act(seq_item pkt);
+	virtual function void write_mon_act(apb_slave_seq_item pkt);
 		`uvm_info(get_type_name(), "Received input packet ", UVM_DEBUG)
 		act_packet_q.push_back(pkt);
 	endfunction: write_mon_act
 
-	virtual function void write_mon_pass(seq_item pkt);
+	virtual function void write_mon_pass(apb_slave_seq_item pkt);
 		`uvm_info(get_type_name(), "Received output packet ", UVM_DEBUG)
 		pass_packet_q.push_back(pkt);
 	endfunction: write_mon_pass
@@ -42,34 +42,33 @@ class apb_scoreboard extends uvm_scoreboard;
 			fork
 
 				//write transaction
-				begin
+				begin : write_start
 					wait(act_packet_q.size() > 0);
 					act_pkt = act_packet_q.pop_front();
 
-					if (act_pkt.PWRITE == 1 && !pass_pkt.PSLVERR) begin
+					if (act_pkt.PWRITE == 1 && !pass_pkt.PSLVERR) begin : if_write
 						mem[act_pkt.PADDR] = act_pkt.PWDATA;
             `uvm_info(get_type_name(), $sformatf("Wrote to address %0d with data %0d\n", act_pkt.PADDR, act_pkt.PWDATA), UVM_MEDIUM)
-					end
-				end
+					end : if_write
+				end : write_start
 				
 				// read transaction
-				begin
+				begin : read_start
 					wait(pass_packet_q.size() > 0); 
           pass_pkt = pass_packet_q.pop_front();
 
-					if(!pass_pkt.PSLVERR) begin
-						if (pass_pkt.PRDATA == mem[act_pkt.PADDR]) begin
+					if(!pass_pkt.PSLVERR) begin : if_error
+						if (pass_pkt.PRDATA == mem[act_pkt.PADDR]) begin : if_read
 							`uvm_info(get_type_name(), $sformatf("SCOREBOARD PASSED: Addr: %0d, Expected: %0d, Got: %0d\n", act_pkt.PADDR, mem[act_pkt.PADDR], pass_pkt.PRDATA), UVM_LOW)
-						end
-						else begin
+						end : if_read
+						else begin : else_read
 							`uvm_error(get_type_name(), $sformatf("SCOREBOARD FAILED: Addr: %0d, Expected: %0d, Got: %0d\n", act_pkt.PADDR, mem[act_pkt.PADDR], pass_pkt.PRDATA))
-						end
-					end
-					else
+						end : else_read
+					end : if_error
+					else 
 						$display("Slave error detected");
-				end
 				$display("-----------------------------------------------------------------------------");
-				end
+				end : read_start
 
 			join
 		end

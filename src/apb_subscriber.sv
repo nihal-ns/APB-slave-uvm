@@ -6,7 +6,7 @@
 class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 	`uvm_component_utils(apb_subscriber)
   
-	uvm_analysis_imp_mon_act_cg#(seq_item, apb_subscriber) mon_act_cg_port;
+	uvm_analysis_imp_mon_act_cg#(apb_slave_seq_item, apb_subscriber) mon_act_cg_port;
 
 	apb_slave_seq_item mon_pass_seq, mon_act_seq;
 	real mon_act_cov, mon_pass_cov;
@@ -71,12 +71,12 @@ class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 		mon_act_cg_port = new("mon_act_cg_port", this);
 	endfunction: build_phase
 
-	function void write(seq_item t);
+	function void write(apb_slave_seq_item t);
 		mon_pass_seq = t;
 		apb_out_cvg.sample();
 	endfunction: write
 
-	function void write_mon_act_cg(seq_item t);
+	function void write_mon_act_cg(apb_slave_seq_item t);
 		mon_act_seq = t;
 		apb_in_cvg.sample();
 	endfunction: write_mon_act_cg

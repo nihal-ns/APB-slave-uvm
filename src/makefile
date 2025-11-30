@@ -1,7 +1,7 @@
 # --- UVM Variables ---
 FILE ?= top.sv
 TOP  ?= top
-test ?= test  # Default test name, can be overridden from the command line
+test ?= custom_test  # Default test name, can be overridden from the command line
 
 # --- Coverage Variables ---
 COV_LOG_FILE   ?= slave_log.log
@@ -42,7 +42,7 @@ d:
 
 # --- UVM Simulation Targets ---
 compile:
-	@vlog -sv -l $(COV_LOG_FILE) fifo_pkg.sv $(FILE)
+	@vlog -sv -l $(COV_LOG_FILE) apb_slave_pkg.sv $(FILE)
 
 simulate: compile
 	@echo "--- Running Simulation (Verbosity: $(VERBOSITY), Test: $(test)) ---"

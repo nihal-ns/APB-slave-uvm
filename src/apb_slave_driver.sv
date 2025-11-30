@@ -20,7 +20,7 @@ class apb_slave_driver extends uvm_driver#(apb_slave_seq_item);
 	virtual task run_phase(uvm_phase phase);
 		forever begin
 			seq_item_port.get_next_item(req);
-			drive(req);
+			drive();
 			seq_item_port.item_done();
 		end
 	endtask: run_phase

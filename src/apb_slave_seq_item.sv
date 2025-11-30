@@ -2,7 +2,7 @@
 `define APB_SLAVE_SEQ_ITEM_INCLUDED_ 
 
 class apb_slave_seq_item extends uvm_sequence_item;    
-	rand logic [`ADDR_WIDTH:0] PADDR;
+	rand logic [`ADDR_WIDTH-1:0] PADDR;
 	rand logic PSELx;
 	rand logic PENABLE;
 	rand logic PWRITE;

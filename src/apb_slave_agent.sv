@@ -15,6 +15,10 @@ class apb_slave_agent extends uvm_agent;
 
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
+
+		if(uvm_config_db#(uvm_active_passive_enum)::get(this, "", "is_active", is_active)) begin
+			`uvm_info("AGENT_CFG", $sformatf("Config found: Switching to %s", is_active.name()), UVM_LOW)
+		end
 		
 		if(get_is_active == UVM_ACTIVE) begin
 			drv = apb_slave_driver::type_id::create("drv",this);
@@ -24,6 +28,7 @@ class apb_slave_agent extends uvm_agent;
 		else begin
 			mon_pass = apb_slave_monitor_pass::type_id::create("mon_pass",this);
 		end
+
 	endfunction: build_phase	
 
 	function void connect_phase(uvm_phase phase);

@@ -20,7 +20,7 @@ class apb_slave_monitor_act extends uvm_monitor;
 
 	virtual task run_phase(uvm_phase phase);
 		forever begin
-			seq_item item = seq_item::type_id::create("item");
+			apb_slave_seq_item item = apb_slave_seq_item::type_id::create("item");
 
 			@(vif.mon_cb);
 			wait (vif.PSELx && vif.PENABLE);  // should check again

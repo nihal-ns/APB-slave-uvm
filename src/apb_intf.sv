@@ -3,15 +3,15 @@
 
 interface apb_intf (input bit PCLK, PRESETn);
 
-	logic [`ADDR_WIDTH:0] PADDR;
+	logic [`ADDR_WIDTH-1:0] PADDR;
 	logic PSELx;
 	logic PENABLE;
 	logic PWRITE;
-	logic [`WID-1:0] PWDATA;
+	logic [`WIDTH-1:0] PWDATA;
 	logic [3:0] PSTRB;
 	
 	logic PREADY;
-	logic [`WID-1:0] PRDATA;
+	logic [`WIDTH-1:0] PRDATA;
 	logic PSLVERR;
 	
 	clocking drv_cb@(posedge PCLK);
