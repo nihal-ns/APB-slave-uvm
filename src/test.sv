@@ -33,7 +33,7 @@ class custom_test extends test;
 	`uvm_component_utils(custom_test)
 
 	wr_rd seq;
-	int no = 1;
+	int no = 3;
 
 	function new(string name = "custom_test",uvm_component parent = null);
 		super.new(name,parent);
@@ -41,6 +41,7 @@ class custom_test extends test;
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
+		phase.phase_done.set_drain_time(this, 500ns);
 		phase.raise_objection(this);
 			repeat(no)
 			seq.start(env.agt_act.seqr);
