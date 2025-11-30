@@ -39,7 +39,7 @@ class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 			bins bit_3 = {3};
 		}
 		PADDR_CP_x_PWDATA: cross PADDR_CP, PWDATA_CP;
-	endgroup
+	endgroup: apb_in_cvg
 
 // Output coverage 
 	covergroup apb_out_cvg;
@@ -58,41 +58,41 @@ class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 			bins r_data_4 = {[31:24]};
 		}
 		PADDR_CP_x_PRDATA: cross mon_act_seq.PADDR , PRDATA_CP;
-	endgroup
+	endgroup: apb_out_cvg
 
 	function new(string name = "apb_subscriber", uvm_component parent);
 		super.new(name, parent);
 		apb_in_cvg = new;
 		apb_out_cvg = new;
-	endfunction
+	endfunction: new
   
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
 		mon_act_cg_port = new("mon_act_cg_port", this);
-	endfunction	
+	endfunction: build_phase
 
 	function void write(seq_item t);
 		mon_pass_seq = t;
 		apb_out_cvg.sample();
-	endfunction
+	endfunction: write
 
 	function void write_mon_act_cg(seq_item t);
 		mon_act_seq = t;
 		apb_in_cvg.sample();
-	endfunction
+	endfunction: write_mon_act_cg
 
 	function void extract_phase(uvm_phase phase);
 		super.extract_phase(phase);
 		mon_act_cov = apb_in_cvg.get_coverage();
 		mon_pass_cov = apb_out_cvg.get_coverage();
-	endfunction
+	endfunction: extract_phase
 
 	function void report_phase(uvm_phase phase);
 		super.report_phase(phase);
 		`uvm_info(get_type_name, $sformatf("Input Coverage ------> %0.2f%%,", mon_act_cov), UVM_MEDIUM);
 		`uvm_info(get_type_name, $sformatf("Output Coverage ------> %0.2f%%", mon_pass_cov), UVM_MEDIUM);
-	endfunction
+	endfunction: report_phase
 
-endclass
+endclass: apb_subscriber
 
 `endif
