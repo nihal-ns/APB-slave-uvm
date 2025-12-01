@@ -9,7 +9,7 @@ class apb_slave_seq extends uvm_sequence#(apb_slave_seq_item);
 	endfunction: new
 
 	virtual task body();
-		req = apb_slave_seq_item::type_id::create("req");          // change the seq_item
+		req = apb_slave_seq_item::type_id::create("req");   
 		start_item(req);
 		if(!req.randomize())
 		begin
@@ -21,6 +21,8 @@ class apb_slave_seq extends uvm_sequence#(apb_slave_seq_item);
 
 endclass: apb_slave_seq 
 
+///////////////////////////////////
+////  write and read sequence  ////
 ///////////////////////////////////
 class wr_rd extends uvm_sequence#(apb_slave_seq_item);
 	`uvm_object_utils(wr_rd)
@@ -37,6 +39,7 @@ class wr_rd extends uvm_sequence#(apb_slave_seq_item);
 			req.PSELx  == 1;
 			req.PWRITE == 1; // It's a write
 			/* req.PENABLE == 1; */
+			req.PSTRB == 9;
 		});
 		`uvm_send(req) 
 
@@ -54,5 +57,76 @@ class wr_rd extends uvm_sequence#(apb_slave_seq_item);
 	endtask: body
 
 endclass
+
+//////////////////////////////////////////////
+////  Continuous write and read sequence  ////
+//////////////////////////////////////////////
+class write_read extends uvm_sequence#(apb_slave_seq_item);
+	`uvm_object_utils(write_read)
+	bit [8:0] read_addr;
+	logic [8:0] write_addr [20:0];
+	int i;
+
+	function new(string name = "write_read");
+		super.new(name);
+	endfunction: new
+	
+	virtual task body();
+		repeat(5) begin 
+			`uvm_do_with(req, {
+				req.PSELx  == 1;
+				req.PWRITE == 1;
+			}) 
+			write_addr[i] = req.PADDR;
+			i++;
+		end
+
+		repeat(5) begin
+			i--;
+			read_addr = write_addr[i];
+			`uvm_do_with(req, {
+				req.PSELx  == 1;
+				req.PWRITE == 0;
+				req.PADDR == read_addr;
+			}) 
+		end
+	endtask: body
+
+endclass: write_read
+
+///////////////////////////////////
+////  write override sequence  ////
+///////////////////////////////////
+class write_override extends uvm_sequence#(apb_slave_seq_item);
+	`uvm_object_utils(write_override)
+	bit [8:0] read_addr;
+
+	function new(string name = "write_override");
+		super.new(name);
+	endfunction: new
+	
+	virtual task body(); 
+	// first write to some address
+		`uvm_do_with(req, {
+			req.PSELx  == 1;
+			req.PWRITE == 1;
+		}) 
+		read_addr = req.PADDR; // store that address here
+
+		`uvm_do_with(req, {
+			req.PSELx  == 1;
+			req.PWRITE == 1;
+			req.PADDR == read_addr;  // pass same address to overwrite the data
+		}) 
+
+		// read from the overriden address
+		`uvm_do_with(req, {
+			req.PSELx  == 1;
+			req.PWRITE == 0;
+			req.PADDR == read_addr;
+		}) 
+	endtask: body
+
+endclass: write_override
 
 `endif
