@@ -60,47 +60,47 @@ program apb_slave_assertion (PCLK, PRESETn, PADDR, PSELx, PENABLE, PWRITE, PWDAT
 	endproperty
 
 	assert property(valid_sel)
-		$info("Psel is valid");
+		/* $info("Psel is valid"); */
 	else
 		$info("Psel is invalid");
 	
 	assert property(valid_ena)
-		$info("Penable is valid");
+		/* $info("Penable is valid"); */
 	else
 		$info("Penable is invalid");
 	
 	assert property(valid_write)
-		$info("Pwrite is valid");
+		/* $info("Pwrite is valid"); */
 	else
 		$info("Pwrite is invalid");
 	
 	assert property(valid_ready)
-		$info("Pready is valid");
+		/* $info("Pready is valid"); */
 	else
 		$info("Pready is invalid");
 	
 	assert property(valid_error)
-		$info("error is valid");
+		/* $info("error is valid"); */
 	else
 		$info("error is invalid");
 	
 	assert property(valid_paddr)
-		$info("Paddr is valid");
+		/* $info("Paddr is valid"); */
 	else
 		$info("Paddr is invalid");
 	
 	assert property(valid_wdata)
-		$info("Pwdata is valid");
+		/* $info("Pwdata is valid"); */
 	else
 		$info("Pwdata is invalid");
 	
 	assert property(valid_rdata)
-		$info("Prdata is valid");
+		/* $info("Prdata is valid"); */
 	else
 		$info("Prdata is invalid");
 
 	assert property(valid_strb)
-		$info("Pstrb is valid");
+		/* $info("Pstrb is valid"); */
 	else
 		$info("Pstrb is invalid");
 
@@ -129,12 +129,12 @@ program apb_slave_assertion (PCLK, PRESETn, PADDR, PSELx, PENABLE, PWRITE, PWDAT
 	endproperty
 	
 	assert property(ena_low)
-		$info("PENABLE is de-assertion");
+		/* $info("PENABLE is de-assertion"); */
 	else
 		$info("PENABLE is still high");
 
 	assert property(stable_check)
-		$info("signals are stable");
+		/* $info("signals are stable"); */
 	else
 		$info("signals are not stable");
 	
