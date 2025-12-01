@@ -8,7 +8,7 @@ program apb_slave_assertion (PCLK, PRESETn, PADDR, PSELx, PENABLE, PWRITE, PWDAT
 	input [`ADDR_WIDTH-1:0] PADDR;
 	input [`WIDTH-1:0] PWDATA;
 	input [`WIDTH-1:0] PRDATA;
-	input [3:0] PSTRB;
+	input [(`WIDTH/8)-1:0] PSTRB;
 
 	//////////////////////////////////
 	///     Signal Valid check     ///
