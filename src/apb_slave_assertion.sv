@@ -117,7 +117,31 @@ program apb_slave_assertion (PCLK, PRESETn, PADDR, PSELx, PENABLE, PWRITE, PWDAT
 	///  Timing checks  ///
 	///////////////////////
 	
+	//Checking PENABLE de-assertion
 	property ena_low;
 		@(posedge PCLK) PREADY |=> !PENABLE;
 	endproperty
+	
+	// Checking signal stability
+	// yet to verify this
+	property stable_check;
+		@(posedge PCLK) PSELx |-> $stable({PADDR, PWRITE, PWDATA, PSTRB});
+	endproperty
+	
+	assert property(ena_low)
+		$info("PENABLE is de-assertion");
+	else
+		$info("PENABLE is still high");
+
+	assert property(stable_check)
+		$info("signals are stable");
+	else
+		$info("signals are not stable");
+	
+	///////////////////////
+	///   Reset checks  ///
+	///////////////////////
+	
+
+	
 endprogram
