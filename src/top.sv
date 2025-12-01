@@ -5,7 +5,7 @@
 `include "apb_intf.sv"
 `include "apb_slave_pkg.sv"
 `include "apb.v"
-/* `include "apb_slave_assertion.sv" */
+`include "apb_slave_assertion.sv"
 
 import uvm_pkg::*;
 import apb_slave_pkg::*;
@@ -38,7 +38,7 @@ module top;
 		.PSTRB(intf.PSTRB)
 		);
 
-	/* bind intf assertion ASSERT(.*); */ 
+	bind intf apb_slave_assertion ASSERT(.*); 
 
 	initial begin
 		uvm_config_db#(virtual apb_intf)::set(null,"*","vif",intf);
