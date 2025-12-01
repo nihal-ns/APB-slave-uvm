@@ -8,7 +8,7 @@ interface apb_intf (input bit PCLK, PRESETn);
 	logic PENABLE;
 	logic PWRITE;
 	logic [`WIDTH-1:0] PWDATA;
-	logic [3:0] PSTRB;
+	logic [(`WIDTH/8)-1:0] PSTRB;
 	
 	logic PREADY;
 	logic [`WIDTH-1:0] PRDATA;

@@ -7,7 +7,7 @@ class apb_slave_seq_item extends uvm_sequence_item;
 	rand logic PENABLE;
 	rand logic PWRITE;
 	rand logic [`WIDTH -1:0] PWDATA;
-	rand logic [3:0] PSTRB;
+	rand logic [(`WIDTH/8)-1:0] PSTRB;
 	
 	logic PREADY;
 	logic [`WIDTH-1:0] PRDATA;
