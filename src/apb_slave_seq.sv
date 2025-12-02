@@ -129,4 +129,29 @@ class write_override extends uvm_sequence#(apb_slave_seq_item);
 
 endclass: write_override
 
+///////////////////////////////////
+////  read data error sequence ////
+///////////////////////////////////
+class read_error extends uvm_sequence#(seq_item);
+	`uvm_object_utils(read_error)
+
+	function new(string name = "write_override");
+		super.new(name);
+	endfunction: new
+
+	virtual task body();
+	// read from any address
+		`uvm_do_with(req, {
+			req.PSELx  == 1;
+			req.PWRITE == 0;
+		})
+
+		`uvm_do_with(req, {
+			req.PSELx  == 1;
+			req.PWRITE == 1;
+			req.PADDR inside {8'h10,8'h11};
+		})
+	endtask: body
+
+endclass: read_error
 `endif

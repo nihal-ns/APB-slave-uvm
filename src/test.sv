@@ -94,4 +94,25 @@ class write_override_test extends test;
   endtask: run_phase
 
 endclass: write_override_test	
+
+//////////////////////////////////////////
+///   write override and the read       //
+/////////////////////////////////////////
+class read_error_test extends test;
+	`uvm_component_utils(read_error_test)
+
+	read_error seq;
+
+	function new(string name = "read_error_test",uvm_component parent = null);
+		super.new(name,parent);
+		seq = read_error::type_id::create("seq");
+	endfunction: new
+
+	virtual task run_phase(uvm_phase phase);
+		phase.raise_objection(this);
+			seq.start(env.agt_act.seqr);
+		phase.drop_objection(this);
+	endtask: run_phase
+
+endclass: read_error_data
 `endif
