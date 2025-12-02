@@ -25,12 +25,11 @@ class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 			bins read = {0};
 			bins write = {1};
 		}
-		PADDR_CP: coverpoint mon_act_seq.PADDR;
+		PADDR_CP: coverpoint mon_act_seq.PADDR {
+			option.auto_bin_max = 4;
+		}
 		PWDATA_CP: coverpoint mon_act_seq.PWDATA {
-			bins w_data_1 = {[7:0]};
-			bins w_data_2 = {[15:8]};
-			bins w_data_3 = {[23:16]};
-			bins w_data_4 = {[31:24]};
+			option.auto_bin_max = 4;
 		}
 		PSTRB_CP: coverpoint mon_act_seq.PSTRB;
 		PADDR_CP_x_PWDATA: cross PADDR_CP, PWDATA_CP;
@@ -47,10 +46,7 @@ class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 			bins error_1 = {1};
 		}
 		PRDATA_CP: coverpoint mon_pass_seq.PRDATA {
-			bins r_data_1 = {[7:0]};
-			bins r_data_2 = {[15:8]};
-			bins r_data_3 = {[23:16]};
-			bins r_data_4 = {[31:24]};
+			option.auto_bin_max = 4;
 		}
 		PADDR_CP_x_PRDATA: cross mon_act_seq.PADDR , PRDATA_CP;
 	endgroup: apb_out_cvg
