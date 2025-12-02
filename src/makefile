@@ -1,7 +1,7 @@
 # --- UVM Variables ---
 FILE ?= top.sv
 TOP  ?= top
-test ?= custom_test  # Default test name, can be overridden from the command line
+test ?= write_read_test  # Default test name, can be overridden from the command line
 
 # --- Coverage Variables ---
 COV_LOG_FILE   ?= slave_log.log
