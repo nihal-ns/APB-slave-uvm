@@ -1,7 +1,7 @@
 `ifndef APB_SLAVE_PKG_INCLUDED_
 `define APB_SLAVE_PKG_INCLUDED_ 
 
-`define WIDTH 8
+`define WIDTH 32
 `define ADDR_WIDTH 8
 
 `include "uvm_macros.svh"
