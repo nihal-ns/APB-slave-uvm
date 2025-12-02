@@ -1,4 +1,4 @@
-`define WIDTH 8
+`define WIDTH 32
 `define ADDR_WIDTH 8
 
 `include "uvm_macros.svh"
@@ -25,17 +25,17 @@ module top;
 	apb_intf intf(PCLK, PRESETn);
 
 	apb_slave dut (
-		.PCLK(PCLK),
-		.PRESETn(PRESETn),
-		.PADDR(intf.PADDR),
-		.PSEL(intf.PSELx),
-		.PENABLE(intf.PENABLE),
-		.PWRITE(intf.PWRITE),
-		.PWDATA(intf.PWDATA),
-		.PREADY(intf.PREADY),
-		.PRDATA(intf.PRDATA),
-		.PSLVERR(intf.PSLVERR),
-		.PSTRB(intf.PSTRB)
+		.clk(PCLK),
+		.rst_n(PRESETn),
+		.paddr(intf.PADDR),
+		.psel(intf.PSELx),
+		.penable(intf.PENABLE),
+		.pwrite(intf.PWRITE),
+		.pwdata(intf.PWDATA),
+		.pready(intf.PREADY),
+		.prdata(intf.PRDATA),
+		.pslverr(intf.PSLVERR),
+		.pstrb(intf.PSTRB)
 		);
 
 	bind intf apb_slave_assertion ASSERT(.*); 
@@ -45,7 +45,7 @@ module top;
 	end
 
 	initial begin
-		run_test("custom_test");
+		run_test();
 		#100 $finish;
 	end
 endmodule	
