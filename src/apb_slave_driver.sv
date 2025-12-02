@@ -39,7 +39,7 @@ class apb_slave_driver extends uvm_driver#(apb_slave_seq_item);
 		if (req.PWRITE) begin
 			vif.PWDATA <= req.PWDATA;
 		end
-		`uvm_info(get_type_name,$sformatf("Driver SETUP: PSEL:%0b | PADDR:%0d | PWRITE:%0b",req.PSELx, req.PADDR, req.PWRITE),UVM_LOW)
+		`uvm_info(get_type_name,$sformatf("Driver SETUP: PSEL:%0b | PADDR:%0d | PWRITE:%0b | PSTRB:%b",req.PSELx, req.PADDR, req.PWRITE, req.PSTRB),UVM_LOW)
 
 		// ------------------------------------
 		// 2. ACCESS Phase: PENABLE=1
@@ -58,7 +58,7 @@ class apb_slave_driver extends uvm_driver#(apb_slave_seq_item);
 		vif.PSELx   <= 0;
 		vif.PENABLE <= 0;
     `uvm_info(get_type_name(),$sformatf("APB %s transfer completed: ADDR:%0d | DATA:%0d | STRB:%0d", (req.PWRITE ? "WRITE" : "READ"), req.PADDR, (req.PWRITE ? req.PWDATA : vif.PRDATA),vif.PSTRB), UVM_MEDIUM)	
-	/* repeat(1)@(vif.drv_cb); */ // should check if this is needed or not	
+		
 	endtask: drive
 
 endclass: apb_slave_driver	 
