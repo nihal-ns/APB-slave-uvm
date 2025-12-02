@@ -39,7 +39,7 @@ class wr_rd extends uvm_sequence#(apb_slave_seq_item);
 			req.PSELx  == 1;
 			req.PWRITE == 1; // It's a write
 			/* req.PENABLE == 1; */
-			req.PSTRB == 9;
+			/* req.PSTRB == 9; */
 		});
 		`uvm_send(req) 
 
