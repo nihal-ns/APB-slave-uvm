@@ -39,7 +39,7 @@ class wr_rd extends uvm_sequence#(apb_slave_seq_item);
 			req.PSELx  == 1;
 			req.PWRITE == 1; // It's a write
 			/* req.PENABLE == 1; */
-			/* req.PSTRB == 9; */
+			req.PSTRB == 9;
 		});
 		`uvm_send(req) 
 
@@ -52,6 +52,7 @@ class wr_rd extends uvm_sequence#(apb_slave_seq_item);
 			req.PWRITE == 0; // It's a read
 			/* req.PENABLE == 1; */
 			req.PADDR  == written_address; // Read from the address we just wrote to
+			req.PSTRB == 0;
 		});
 		`uvm_send(req)
 	endtask: body
@@ -88,6 +89,7 @@ class write_read extends uvm_sequence#(apb_slave_seq_item);
 				req.PSELx  == 1;
 				req.PWRITE == 0;
 				req.PADDR == read_addr;
+				req.PSTRB == 0;
 			}) 
 		end
 	endtask: body
@@ -124,6 +126,7 @@ class write_override extends uvm_sequence#(apb_slave_seq_item);
 			req.PSELx  == 1;
 			req.PWRITE == 0;
 			req.PADDR == read_addr;
+			req.PSTRB == 0;
 		}) 
 	endtask: body
 
@@ -132,10 +135,10 @@ endclass: write_override
 ///////////////////////////////////
 ////  read data error sequence ////
 ///////////////////////////////////
-class read_error extends uvm_sequence#(seq_item);
+class read_error extends uvm_sequence#(apb_slave_seq_item);
 	`uvm_object_utils(read_error)
 
-	function new(string name = "write_override");
+	function new(string name = "read_error");
 		super.new(name);
 	endfunction: new
 
@@ -144,12 +147,14 @@ class read_error extends uvm_sequence#(seq_item);
 		`uvm_do_with(req, {
 			req.PSELx  == 1;
 			req.PWRITE == 0;
+			req.PSTRB == 0;
 		})
 
 		`uvm_do_with(req, {
 			req.PSELx  == 1;
 			req.PWRITE == 1;
 			req.PADDR inside {8'h10,8'h11};
+			req.PSTRB == 0;
 		})
 	endtask: body
 
