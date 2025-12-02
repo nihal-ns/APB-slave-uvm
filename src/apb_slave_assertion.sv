@@ -142,6 +142,14 @@ program apb_slave_assertion (PCLK, PRESETn, PADDR, PSELx, PENABLE, PWRITE, PWDAT
 	///   Reset checks  ///
 	///////////////////////
 	
+	// check all outputs should be 0 at reset condition
+	property reset_check;
+		@(posedge PCLK) !PRESETn |-> ({PREADY, PRDATA, PSLVERR}) == 0;
+	endproperty
 
+	assert property(reset_check)
+		/* $info("Outputs are cleared "); */
+	else
+		$info("Outputs are not cleared");
 	
 endprogram
