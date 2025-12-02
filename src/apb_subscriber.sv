@@ -32,12 +32,7 @@ class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 			bins w_data_3 = {[23:16]};
 			bins w_data_4 = {[31:24]};
 		}
-		PSTRB_CP: coverpoint mon_act_seq.PSTRB; // {
-			/* bins bit_0 = {0}; */
-			/* bins bit_1 = {1}; */
-			/* bins bit_2 = {2}; */
-			/* bins bit_3 = {3}; */
-		//}
+		PSTRB_CP: coverpoint mon_act_seq.PSTRB;
 		PADDR_CP_x_PWDATA: cross PADDR_CP, PWDATA_CP;
 	endgroup: apb_in_cvg
 
