@@ -16,6 +16,8 @@ class apb_scoreboard extends uvm_scoreboard;
 	bit [`WIDTH-1:0] mem[*];
 	int MATCH, MISMATCH;
 
+  bit [(`WIDTH/8)-1:0] stored_strobes[int];
+
 	function new(string name = "apb_scoreboard", uvm_component parent);
 		super.new(name,parent);
 	endfunction: new
@@ -58,150 +60,57 @@ class apb_scoreboard extends uvm_scoreboard;
 
 	
 	virtual task compare(apb_slave_seq_item act_pkt, pass_pkt);
-		
-		if(act_pkt.PWRITE) begin : write_transaction
+		int num_bytes = `WIDTH / 8;
+		bit [(`WIDTH/8)-1:0] current_strobe;
+		bit byte_match;
 
-			////////////////////////////////////////////
-			//			Write transaction part            //
-			////////////////////////////////////////////
-			if(!pass_pkt.PSLVERR) begin : write_pass
-			
-				// strobe part
-				/* for(int i=0; i<4; i++) begin */
-				/* 	if(act_pkt.PSTRB[i]) begin */
-				/* 		mem[act_pkt.PADDR][(i*8) +: 8] = act_pkt.PWDATA[(i*8) +: 8]; */
-				/* 	end */
-				/* end */
-
+		if (act_pkt.PWRITE) begin : write_transaction
+			if (!pass_pkt.PSLVERR) begin
+				// Store Data and Strobe directly (No loops, no exists checks)
 				mem[act_pkt.PADDR] = act_pkt.PWDATA;
+				stored_strobes[act_pkt.PADDR] = act_pkt.PSTRB;
 
-				/* `uvm_info(get_type_name(), $sformatf("WRITE SUCCESS: Addr:%0d Data:%0d Strobe:%b", act_pkt.PADDR, mem[act_pkt.PADDR], act_pkt.PSTRB), UVM_MEDIUM) */
-				`uvm_info(get_type_name(), $sformatf("WRITE SUCCESS: Addr:%0d Data:%0d ", act_pkt.PADDR, mem[act_pkt.PADDR]), UVM_MEDIUM)
-				end : write_pass
-				else begin : write_fail
-					`uvm_info(get_type_name(), $sformatf("WRITE ERROR (PSLVERR): Addr:%0d", act_pkt.PADDR), UVM_MEDIUM)
-				end : write_fail
-			
-		end : write_transaction
-
-		////////////////////////////////////////////
-		//				read transaction part           //
-		////////////////////////////////////////////
+				`uvm_info(get_type_name(), $sformatf("WRITE SUCCESS: Addr:%0d Data:%0d Strobe:%b", act_pkt.PADDR, mem[act_pkt.PADDR], act_pkt.PSTRB), UVM_MEDIUM)
+			end	
+			else begin
+				`uvm_info(get_type_name(), $sformatf("WRITE ERROR (PSLVERR): Addr:%0d", act_pkt.PADDR), UVM_MEDIUM)
+			end
+		end 
 		else begin : read_transaction
-			if (!pass_pkt.PSLVERR) begin : read_pass
+			if (!pass_pkt.PSLVERR) begin
+			// Retrieve the Strobe (Returns 0 if address not found)
+			current_strobe = stored_strobes[act_pkt.PADDR];
+			byte_match = 1;
 
-				if (pass_pkt.PRDATA == mem[act_pkt.PADDR]) begin : read_data_pass
-					`uvm_info(get_type_name(), $sformatf("READ PASSED: Addr:%0d Expected:%0d Got:%0d", act_pkt.PADDR, mem[act_pkt.PADDR], pass_pkt.PRDATA), UVM_LOW)
-					MATCH++;
-				end : read_data_pass
-				else begin : read_data_fail
-					`uvm_error(get_type_name(), $sformatf("READ FAILED: Addr:%0d Expected:%0d Got:%0d", act_pkt.PADDR, mem[act_pkt.PADDR], pass_pkt.PRDATA))
-					MISMATCH++;
-				end : read_data_fail
-			end : read_pass
-			else begin : read_fail
-				`uvm_info(get_type_name(), $sformatf("READ ERROR (PSLVERR): Addr:%0d", act_pkt.PADDR), UVM_MEDIUM)
-			end : read_fail
+			// Loop through bytes and compare ONLY valid ones
+			for(int i=0; i<num_bytes; i++) begin
+				if (current_strobe[i]) begin
+					if (pass_pkt.PRDATA[(i*8) +: 8] !== mem[act_pkt.PADDR][(i*8) +: 8]) begin
+						`uvm_error(get_type_name(), $sformatf("Byte %0d Mismatch! Addr:%0d Exp Byte:%h Got Byte:%h", i, act_pkt.PADDR, mem[act_pkt.PADDR][(i*8) +: 8], pass_pkt.PRDATA[(i*8) +: 8]))
+						byte_match = 0;
+					end
+				end
+			end
 
-		end : read_transaction
+			if (byte_match) begin
+				`uvm_info(get_type_name(), $sformatf("READ PASSED: Addr:%0d Mask:%b Data:%0d", act_pkt.PADDR, current_strobe, pass_pkt.PRDATA), UVM_LOW)
+				MATCH++;
+			end else begin
+				MISMATCH++;
+			end
+		end else begin
+			`uvm_info(get_type_name(), $sformatf("READ ERROR (PSLVERR): Addr:%0d", act_pkt.PADDR), UVM_MEDIUM)
+		end
+	end
+	endtask: compare		
 	
-	endtask: compare
-
-	// version one ==============================================================================================//
-	//
-	/* virtual task run_phase(uvm_phase phase); */
-	/* 	apb_slave_seq_item act_pkt, pass_pkt; */
-	/* 	logic [`WIDTH-1:0] expected_data; */
-
-	/* 	forever begin */
-	/* 		wait(act_packet_q.size() > 0 && pass_packet_q.size() > 0); */
-
-	/* 		act_pkt  = act_packet_q.pop_front(); */
-	/* 		pass_pkt = pass_packet_q.pop_front(); */
-
-	/* 		if (act_pkt.PWRITE) begin */
-	/* 			// --- WRITE TRANSACTION --- */
-	/* 			if (!pass_pkt.PSLVERR) begin */
-					
-	/* 				for(int i=0; i<4; i++) begin */
-	/* 					if(act_pkt.PSTRB[i]) begin */
-	/* 						mem[act_pkt.PADDR][(i * (`WIDTH/4)) +: (`WIDTH/4)] = act_pkt.PWDATA[(i * (`WIDTH/4)) +: (`WIDTH/4)]; */
-	/* 					end */
-	/* 				end */
-
-	/* 				`uvm_info(get_type_name(), $sformatf("WRITE SUCCESS: Addr:0x%0h Data:0x%0h Strobe:%b", act_pkt.PADDR, mem[act_pkt.PADDR], act_pkt.PSTRB), UVM_MEDIUM) */
-	/* 			end */ 
-	/* 			else begin */
-	/* 				`uvm_info(get_type_name(), $sformatf("WRITE ERROR (PSLVERR): Addr:0x%0h", act_pkt.PADDR), UVM_MEDIUM) */
-	/* 			end */
-	/* 		end */ 
-	/* 		else begin */
-	/* 			// --- READ TRANSACTION --- */
-	/* 			if (!pass_pkt.PSLVERR) begin */
-
-	/* 				if (pass_pkt.PRDATA == expected_data) begin */
-	/* 					`uvm_info(get_type_name(), $sformatf("READ PASSED: Addr:0x%0h Expected:0x%0h Got:0x%0h", act_pkt.PADDR, expected_data, pass_pkt.PRDATA), UVM_LOW) */
-	/* 				end */ 
-	/* 				else begin */
-	/* 					`uvm_error(get_type_name(), $sformatf("READ FAILED: Addr:0x%0h Expected:0x%0h Got:0x%0h", act_pkt.PADDR, expected_data, pass_pkt.PRDATA)) */
-	/* 				end */
-	/* 			end */ 
-	/* 			else begin */
-	/* 				`uvm_info(get_type_name(), $sformatf("READ ERROR (PSLVERR): Addr:0x%0h", act_pkt.PADDR), UVM_MEDIUM) */
-	/* 			end */
-	/* 		end */
-			
-	/* 		$display("-----------------------------------------------------------------------------"); */
-	/* 	end */
-	/* endtask: run_phase */
-
-	// version two ==============================================================================================//
-/* 		virtual task run_phase(uvm_phase phase); */
-/* 		apb_slave_seq_item act_pkt, pass_pkt; */
-/*     forever begin */
-/* 			fork */
-
-/* 				//write transaction */
-/* 				begin : write_start */
-/* 					wait(act_packet_q.size() > 0); */
-/* 					act_pkt = act_packet_q.pop_front(); */
-
-/* 					if (act_pkt.PWRITE == 1 && !pass_pkt.PSLVERR) begin : if_write */
-/* 						mem[act_pkt.PADDR] = act_pkt.PWDATA; */
-/*             `uvm_info(get_type_name(), $sformatf("Wrote to address %0d with data %0d\n", act_pkt.PADDR, act_pkt.PWDATA), UVM_MEDIUM) */
-/* 					end : if_write */
-/* 				end : write_start */
-
-/* 				// read transaction */
-/* 				begin : read_start */
-/* 					wait(pass_packet_q.size() > 0); */
-/*           pass_pkt = pass_packet_q.pop_front(); */
-
-/* 					if(!pass_pkt.PSLVERR) begin : if_error */
-/* 						if (pass_pkt.PRDATA == mem[act_pkt.PADDR]) begin : if_read */
-/* 							`uvm_info(get_type_name(), $sformatf("SCOREBOARD PASSED: Addr: %0d, Expected: %0d, Got: %0d\n", act_pkt.PADDR, mem[act_pkt.PADDR], pass_pkt.PRDATA), UVM_LOW) */
-/* 						end : if_read */
-/* 						else begin : else_read */
-/* 							`uvm_error(get_type_name(), $sformatf("SCOREBOARD FAILED: Addr: %0d, Expected: %0d, Got: %0d\n", act_pkt.PADDR, mem[act_pkt.PADDR], pass_pkt.PRDATA)) */
-/* 						end : else_read */
-/* 					end : if_error */
-/* 					else */
-/* 						$display("Slave error detected"); */
-/* 				$display("-----------------------------------------------------------------------------"); */
-/* 				end : read_start */
-
-/* 			join */
-/* 		end */
-/* 	endtask: run_phase */
-
-
   function void report_phase(uvm_phase phase);
     super.report_phase(phase);
 		$display("\n==========================================================================================================\n");
     `uvm_info("SCB", $sformatf("||| TOTAL MATCHES     : %0d |||", MATCH), UVM_NONE)
     `uvm_info("SCB", $sformatf("||| TOTAL MISSMATCHES : %0d |||", MISMATCH), UVM_NONE)
 		$display("\n==========================================================================================================\n");
-  endfunction
+  endfunction: report_phase
 
 endclass: apb_scoreboard
 
