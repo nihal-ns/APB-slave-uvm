@@ -50,7 +50,7 @@ simulate: compile
 
 # --- Coverage Targets ---
 cov: 
-	@vlog -sv +acc +cover +fcover -l $(COV_LOG_FILE) fifo_pkg.sv $(FILE)
+	@vlog -sv +acc +cover +fcover -l $(COV_LOG_FILE) apb_slave_pkg.sv $(FILE)
 	@vsim -vopt work.$(TOP) -voptargs=+acc=npr -assertdebug -l simulation.log -coverage $(VSIM_EXTRA_OPTS) -c -do "coverage save -onexit -assert -directive -cvg -codeAll coverage.ucdb; run -all; exit"
 	@vcover report -html $(COV_DB_FILE) -htmldir $(COV_REPORT_DIR) -details
 
