@@ -125,7 +125,7 @@ program apb_slave_assertion (PCLK, PRESETn, PADDR, PSELx, PENABLE, PWRITE, PWDAT
 	// Checking signal stability
 	// yet to verify this
 	property stable_check;
-		@(posedge PCLK) PSELx |-> $stable({PADDR, PWRITE, PWDATA, PSTRB});
+		@(posedge PCLK) PSELx |=> $stable({PADDR, PWRITE, PWDATA, PSTRB});
 	endproperty
 	
 	assert property(ena_low)
