@@ -120,4 +120,27 @@ class read_error_test extends test;
 
 endclass: read_error_test
 
+/////////////////////////////
+///   regression test     ///
+/////////////////////////////
+class regression_test extends test;
+	`uvm_component_utils(regression_test)
+
+	regression_seq seq;
+
+	function new(string name = "regression_test",uvm_component parent = null);
+		super.new(name,parent);
+		seq = regression_seq::type_id::create("seq");
+	endfunction: new
+
+	virtual task run_phase(uvm_phase phase);
+		phase.phase_done.set_drain_time(this, 50ns);
+		phase.raise_objection(this);
+			repeat(500)
+			seq.start(env.agt_act.seqr);
+		phase.drop_objection(this);
+	endtask: run_phase
+
+endclass: regression_test
+
 `endif

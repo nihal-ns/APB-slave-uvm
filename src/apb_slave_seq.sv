@@ -159,4 +159,30 @@ class read_error extends uvm_sequence#(apb_slave_seq_item);
 	endtask: body
 
 endclass: read_error
+
+///////////////////////////////////
+////    regression sequence    ////
+///////////////////////////////////
+class regression_seq extends uvm_sequence#(apb_slave_seq_item);
+	`uvm_object_utils(regression_seq)
+
+	wr_rd						seq_1;
+	write_read			seq_2;
+	write_override	seq_3;
+	read_error			seq_4;
+
+	function new(string name = "regression_seq");
+		super.new(name);
+	endfunction: new
+
+	virtual task body();
+	`uvm_info(get_type_name(),$sformatf("\n regression sequence started \n"), UVM_LOW);
+		`uvm_do(seq_1)
+		`uvm_do(seq_2)
+		`uvm_do(seq_3)
+		`uvm_do(seq_4)
+	endtask: body
+
+endclass: regression_seq
+
 `endif
