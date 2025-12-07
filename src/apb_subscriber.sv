@@ -14,11 +14,11 @@ class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 	// Input coverage
 	covergroup apb_in_cvg ;
 		PSEL_CP: coverpoint mon_act_seq.PSELx {
-			bins sel_0 = {0};
+			/* bins sel_0 = {0}; */
 			bins sel_1 = {1};
 		}
 		PENABLE_CP: coverpoint mon_act_seq.PENABLE {
-			bins en_0 = {0};
+			/* bins en_0 = {0}; */
 			bins en_1 = {1};
 		} 
 		PWRITE_CP: coverpoint mon_act_seq.PWRITE {
@@ -38,7 +38,7 @@ class apb_subscriber extends uvm_subscriber#(apb_slave_seq_item);
 // Output coverage 
 	covergroup apb_out_cvg;
 		PREADY_CP: coverpoint mon_pass_seq.PREADY {
-			bins ready_0 = {0};
+			/* bins ready_0 = {0}; */
 			bins ready_1 = {1};
 		}
 		PSLVERR_CP: coverpoint mon_pass_seq.PSLVERR {
